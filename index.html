@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#020811">
+<title>JARVIS</title>
+<style>
+:root{--bg:#020811;--panel:#071522;--line:#124d69;--cyan:#25d8ff;--muted:#8baab9;--white:#eafaff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0%,#09263a 0,#020811 52%);color:var(--white);font-family:system-ui,-apple-system,sans-serif}
+header{padding:25px 20px 12px;text-align:center;border-bottom:1px solid #123449}header small{letter-spacing:4px;color:var(--cyan)}h1{font-size:29px;letter-spacing:7px;margin:5px 0;text-shadow:0 0 18px #00bfff}header p{font-size:12px;color:var(--muted);margin:0}
+main{padding:15px;max-width:700px;margin:auto}.orb-wrap{display:flex;justify-content:center;padding:12px 0 18px}.orb{width:145px;height:145px;border-radius:50%;border:1px solid #25d8ff;display:grid;place-items:center;box-shadow:0 0 20px #007da8,inset 0 0 22px #006b8a;position:relative;background:radial-gradient(circle,#125c78 0,#061827 45%,#020811 70%)}.orb:before,.orb:after{content:"";position:absolute;inset:-10px;border:1px dashed #25d8ff88;border-radius:50%;animation:spin 18s linear infinite}.orb:after{inset:8px;border-style:solid;animation-direction:reverse;animation-duration:12s}.orb span{font-size:38px;color:var(--cyan);text-shadow:0 0 15px var(--cyan)}@keyframes spin{to{transform:rotate(360deg)}}.status{text-align:center;color:var(--cyan);font-size:12px;letter-spacing:2px;margin-bottom:14px}
+.card{background:linear-gradient(145deg,#091a29dd,#040d17);border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:13px;box-shadow:0 8px 24px #0005}.label{font-size:11px;letter-spacing:2px;color:var(--cyan);margin-bottom:12px}.response{min-height:54px;color:#d8f3ff;line-height:1.5;font-size:14px}.inputrow{display:flex;gap:8px}.inputrow input{min-width:0;flex:1;background:#020b14;border:1px solid #1b5067;color:white;border-radius:10px;padding:13px;font-size:14px;outline:none}.btn{border:1px solid #1b9bbd;background:#08283a;color:var(--cyan);padding:12px 14px;border-radius:10px;font-weight:600}.microw{text-align:center;padding:8px}.mic{width:68px;height:68px;border-radius:50%;font-size:27px;background:radial-gradient(circle,#0c3e58,#04111e);box-shadow:0 0 20px #007da855;border:1px solid var(--cyan);color:var(--cyan)}.hint{color:var(--muted);font-size:11px;margin-top:10px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.app{background:#061521;border:1px solid #153d50;border-radius:12px;color:var(--white);padding:14px 5px;font-size:12px}.app b{display:block;font-size:22px;margin-bottom:7px}.app:active,.btn:active{background:#10425a}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.foot{text-align:center;color:#587888;font-size:10px;padding:10px 5px 25px}
+</style>
+</head>
+<body>
+<header><small>PERSONAL AI SYSTEM</small><h1>J.A.R.V.I.S.</h1><p>JUST A RATHER VERY INTELLIGENT SYSTEM</p></header>
+<main>
+<div class="orb-wrap"><div class="orb"><span>✦</span></div></div><div class="status" id="status">SYSTEM ONLINE · READY</div>
+<section class="card"><div class="label">◈ INTERACTION CONSOLE</div><div class="response" id="response">Good day. I am JARVIS. Tap the microphone or type a command.</div><div class="microw"><button class="mic" onclick="listen()" aria-label="Speak">🎙</button><div class="hint">Tap to speak · Speech recognition uses your Android speech service</div></div><div class="inputrow"><input id="command" placeholder="Enter a command…" onkeydown="if(event.key==='Enter')runCommand()"><button class="btn" onclick="runCommand()">RUN</button></div></section>
+<section class="card"><div class="label">◈ QUICK APP ACCESS</div><div class="grid">
+<button class="app" onclick="openApp('YouTube')"><b>▶</b>YouTube</button><button class="app" onclick="openApp('WhatsApp')"><b>◉</b>WhatsApp</button><button class="app" onclick="openApp('Chrome')"><b>🌐</b>Chrome</button><button class="app" onclick="openApp('Camera')"><b>▣</b>Camera</button><button class="app" onclick="openApp('Maps')"><b>⌖</b>Maps</button><button class="app" onclick="openApp('Settings')"><b>⚙</b>Settings</button>
+</div></section>
+<section class="two"><div class="card"><div class="label">◈ LOCAL TIME</div><div id="clock" style="font-size:22px;color:var(--cyan)">--:--</div><div id="date" class="hint"></div></div><div class="card"><div class="label">◈ SYSTEM</div><div style="font-size:14px">Core status: <span style="color:var(--cyan)">READY</span></div><div class="hint">Prototype · v1.0</div></div></section>
+<section class="card"><div class="label">◈ COMMAND EXAMPLES</div><div class="hint" style="line-height:2">“Open YouTube” · “Open WhatsApp” · “Search for space news” · “Set alarm for 6:30 AM” · “What time is it?” · “Tell me a joke”</div></section>
+<div class="foot">JARVIS ANDROID PROTOTYPE · Commands run on your device where supported</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function say(text){$('response').textContent=text;try{if(window.Jarvis)Jarvis.speak(text)}catch(e){}}
+function listen(){if(window.Jarvis){$('status').textContent='LISTENING REQUESTED';Jarvis.listen()}else say('Voice input is available in the installed Android app.')}
+window.onJarvisHeard=function(text){$('command').value=text;$('status').textContent='COMMAND RECEIVED';runCommand()};
+function openApp(name){if(window.Jarvis){say('Opening '+name+'.');Jarvis.openApp(name)}else say('App launch is available in the Android app.') }
+function runCommand(){
+ const raw=$('command').value.trim();if(!raw)return;const c=raw.toLowerCase();$('command').value='';
+ if(c.includes('youtube')){openApp('YouTube');return}
+ if(c.includes('whatsapp')){openApp('WhatsApp');return}
+ if(c.includes('chrome')){openApp('Chrome');return}
+ if(c.includes('camera')){openApp('Camera');return}
+ if(c.includes('maps')){openApp('Maps');return}
+ if(c.includes('settings')){openApp('Settings');return}
+ if(c.includes('time')){say('The time is '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})+'.');return}
+ if(c.includes('date')||c.includes('today')){say('Today is '+new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'})+'.');return}
+ if(c.includes('search')){let q=raw.replace(/search( for)?/i,'').trim()||'latest news';say('Searching the web for '+q+'.');if(window.Jarvis)Jarvis.search(q);return}
+ if(c.includes('alarm')){let m=c.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/);if(m){let h=+m[1],min=+(m[2]||0);if(m[3]==='pm'&&h<12)h+=12;if(m[3]==='am'&&h===12)h=0;if(window.Jarvis)Jarvis.setAlarm(h,min);say('Opening the clock app to confirm your alarm.');}else say('Please include a time, such as set alarm for 6:30 AM.');return}
+ if(c.includes('joke')){say('Why did the computer go to the doctor? It had a virus.');return}
+ if(c.includes('hello')||c.includes('hi jarvis')){say('Hello. All core interface systems are ready. What can I do for you?');return}
+ if(c.includes('help')||c.includes('what can you do')){say('I can open supported apps, search the web, tell the time and date, set an alarm, and tell a joke. More features can be added to this project.');return}
+ say('I do not have a handler for that command yet. Try “help” or “search for…” .');
+}
+function tick(){$('clock').textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});$('date').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'})}tick();setInterval(tick,1000);
+</script>
+</body></html>
